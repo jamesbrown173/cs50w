@@ -1,0 +1,38 @@
+.top-bar {
+  width: 100vw;
+  display: flex;
+  justify-content: end;
+}
+
+.main-search {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+input {
+  border-radius: 2rem;
+}
+
+.advanced-search-input {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+p {
+  text-align: left;
+}
+
+.advanced-button {
+  background-color: blue;
+  color: white;
+}
