@@ -20,6 +20,7 @@
 
 input {
   border-radius: 2rem;
+  border: 1px solid;
 }
 
 .advanced-search-input {
@@ -35,4 +36,13 @@ p {
 .advanced-button {
   background-color: blue;
   color: white;
+}
+
+.form-items-lower {
+  display: flex;
+  gap: 1rem;
+}
+
+a {
+  padding-right: 1rem;
 }
