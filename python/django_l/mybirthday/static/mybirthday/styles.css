@@ -1,0 +1,13 @@
+h1 {
+  font-family: sans-serif;
+  font-size: 9rem;
+  color: blue;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  align-items: center;
+  justify-content: center;
+}
