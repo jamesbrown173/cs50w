@@ -1,10 +1,24 @@
 {% extends "encyclopedia/layout.html" %}
 
+
 {% block title %}
+    {% if entries.type != array %}
+
     Encyclopedia
+    {% else %}
+    {{ title}}
+    {% endif %}
+
 {% endblock %}
 
+
+
 {% block body %}
+
+    {% if isIndex %} 
+
+
+  
     <h1>All Pages</h1>
 
     <ul>
@@ -12,5 +26,11 @@
             <li>{{ entry }}</li>
         {% endfor %}
     </ul>
+
+    {% else %}
+
+     {{ entries|safe }}
+
+    {% endif %}
 
 {% endblock %}
