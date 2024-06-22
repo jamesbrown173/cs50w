@@ -11,19 +11,16 @@
 
 {% endblock %}
 
-
-
 {% block body %}
 
     {% if isIndex %} 
-
 
   
     <h1>All Pages</h1>
 
     <ul>
         {% for entry in entries %}
-            <li>{{ entry }}</li>
+        <li><a href="{{ entry }}">{{ entry }}</a></li>
         {% endfor %}
     </ul>
 
