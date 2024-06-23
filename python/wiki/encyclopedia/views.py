@@ -1,8 +1,15 @@
+from django import forms
 from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect, render
+from django.urls import reverse
 from django.urls.exceptions import Http404
 
 from . import util
+
+
+class NewEntryForm(forms.Form):
+    title = forms.CharField(label="title")
+    content = forms.CharField(label="content")
 
 
 def index(request):
@@ -32,6 +39,24 @@ def show_entry(request, name):
 
 
 def add_entry(request):
+    if request.method == "POST":
+
+        form = NewEntryForm(request.POST)
+        if form.is_valid():
+            clean_title = form.cleaned_data["title"]
+            clean_content = form.cleaned_data["content"]
+            if check_exists(request, clean_title) == False:
+                util.save_entry(clean_title, clean_content)
+                ## This is a terrible way of displaying the new entry, you should just re-route to the title name
+                ## but you'll need to write a function to account for spaces.
+
+                ## TODO 🐵 .............  wiki is not a namespace???
+                return HttpResponseRedirect(reverse("wiki:index"))
+
+            else:
+                print("THIS ENTRY ALREADY EXISTS")
+        else:
+            print("FORM INVALID")
     return render(request, "encyclopedia/addentry.html")
 
 

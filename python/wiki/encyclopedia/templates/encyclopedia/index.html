@@ -24,6 +24,12 @@
         {% endfor %}
     </ul>
 
+    {% elif isNewEntry %}
+    
+    <h1> {{ heading|safe }} </h1>
+
+    <p> {{body|safe }}</p>
+
     {% else %}
 
      {{ entries|safe }}
