@@ -30,10 +30,12 @@
 
     <p> {{body|safe }}</p>
 
+    
+
     {% else %}
 
      {{ entries|safe }}
-
+     <a href="edit/{{title}}">Edit</a>
     {% endif %}
 
 {% endblock %}

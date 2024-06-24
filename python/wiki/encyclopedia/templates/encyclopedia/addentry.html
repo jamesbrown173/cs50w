@@ -6,6 +6,29 @@ New Page
 
 {% block body %}
 
+{% if isError %}
+
+  <h1> Entry already exists or is invalid </h1>
+
+{% elif isEdit %}
+
+  <h1> Edit </h1>
+
+  <form action="{% url 'add_entry' %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="_method" value="PUT">
+    <label for="title">Title:</label>
+    <input value="{{title}}" type="text" id="title" name="title"><br>
+    <label for="content">Content:</label><br>
+    <textarea id="content" name="content" rows="10" cols="30"> {{ content }} </textarea><br>
+    <input type="submit" value="Submit">
+  </form>
+
+
+
+{% else %}
+
+
 <h1>Add a new page</h1>
 <form action="{% url 'add_entry' %}" method="post">
     {% csrf_token %}
@@ -15,5 +38,7 @@ New Page
     <textarea id="content" name="content" rows="10" cols="30"></textarea><br>
     <input type="submit" value="Submit">
 </form>
+
+{% endif %}
 
 {% endblock %}

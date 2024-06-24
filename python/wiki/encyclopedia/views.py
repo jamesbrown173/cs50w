@@ -1,10 +1,16 @@
+from random import choice  # Add this import statement
+
 from django import forms
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import HttpResponseRedirect, render
 from django.urls import reverse
 from django.urls.exceptions import Http404
+from markdown2 import Markdown
 
 from . import util
+
+markdowner = Markdown()
 
 
 class NewEntryForm(forms.Form):
@@ -24,6 +30,17 @@ def index(request):
     )
 
 
+def random(request):
+
+    entries = util.list_entries()
+    print(entries)
+    random_entry = choice(entries)
+    print(random_entry)
+
+    # Redirect to the page of the randomly chosen entry
+    return HttpResponseRedirect(f"{random_entry}")
+
+
 def show_entry(request, name):
 
     if check_exists(request, name) == False:
@@ -31,32 +48,49 @@ def show_entry(request, name):
 
     e = util.get_entry(name)
 
+    f = markdowner.convert(e)
+
     return render(
         request,
         "encyclopedia/index.html",
-        {"entries": e, "title": name.capitalize(), "isIndex": False},
+        {"entries": f, "title": name.capitalize(), "isIndex": False},
     )
 
 
 def add_entry(request):
-    if request.method == "POST":
+    method = request.POST.get("_method", "").upper()
+    form = NewEntryForm(request.POST)
 
-        form = NewEntryForm(request.POST)
+    if request.method == "POST" and method == "PUT":
+        print("method is post and put to update, handling it here .....")
+        if form.is_valid():
+
+            # 🐵 Convert the markdown back into HTML
+
+            clean_title = form.cleaned_data["title"]
+            clean_content = form.cleaned_data["content"]
+            util.save_entry(clean_title, clean_content)
+            return HttpResponseRedirect(f"{clean_title}")
+
+    elif request.method == "POST":
+        print("method is post only....")
         if form.is_valid():
             clean_title = form.cleaned_data["title"]
             clean_content = form.cleaned_data["content"]
             if check_exists(request, clean_title) == False:
+                print("NEW ENTRY")
                 util.save_entry(clean_title, clean_content)
-                ## This is a terrible way of displaying the new entry, you should just re-route to the title name
-                ## but you'll need to write a function to account for spaces.
-
-                ## TODO 🐵 .............  wiki is not a namespace???
-                return HttpResponseRedirect(reverse("wiki:index"))
-
+                return HttpResponseRedirect(f"{clean_title}")
             else:
-                print("THIS ENTRY ALREADY EXISTS")
+                messages.error(request, "This entry already exists.")
+                return render(request, "encyclopedia/addentry.html", {"isError": True})
+
         else:
             print("FORM INVALID")
+
+    else:
+        print("Method is ???")
+
     return render(request, "encyclopedia/addentry.html")
 
 
@@ -82,6 +116,29 @@ def search(request, query):
                 "not_found": True,
             },
         )
+
+
+def edit(request, name):
+
+    # Fetch the content using the get_entry function
+    content = util.get_entry(name)
+
+    # Convert into Markdown  🐵
+
+    # Return the add_entry page with the content pre-loaded into the fields
+    return render(
+        request,
+        "encyclopedia/addentry.html",
+        {
+            "isError": False,
+            "isEdit": True,
+            "title": name,
+            "content": content,
+        },
+    )
+
+
+## Functions for checking data. Should probably move to util.py
 
 
 def check_exists(request, name):
